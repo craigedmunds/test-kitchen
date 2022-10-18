@@ -103,7 +103,7 @@ module Kitchen
       # (see Base#cleanup!)
       def cleanup!
         if @connection
-          string_to_mask = "[SSH] shutting previous connection #{@connection}"
+          string_to_mask = "[SSH lib/kitchen/transport/ssh] shutting previous connection #{@connection}"
           masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
           logger.debug(masked_string)
           @connection.close
@@ -128,7 +128,7 @@ module Kitchen
         def close
           return if @session.nil?
 
-          string_to_mask = "[SSH] closing connection to #{self}"
+          string_to_mask = "[SSH lib/kitchen/transport/ssh] closing connection to #{self}"
           masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
           logger.debug(masked_string)
           session.close
@@ -140,7 +140,7 @@ module Kitchen
         def execute(command)
           return if command.nil?
 
-          string_to_mask = "[SSH] #{self} (#{command})"
+          string_to_mask = "[SSH lib/kitchen/transport/ssh] #{self} (#{command})"
           masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
           logger.debug(masked_string)
           exit_code = execute_with_exit_code(command)
@@ -158,7 +158,7 @@ module Kitchen
         # (see Base::Connection#login_command)
         def login_command
           args  = %w{ -o UserKnownHostsFile=/dev/null }
-          args += %w{ -o StrictHostKeyChecking=no }
+          args += %w{ -o StrictHostKeyChecking=no -vvv }
           args += %w{ -o IdentitiesOnly=yes } if options[:keys]
           args += %W{ -o LogLevel=#{logger.debug? ? "VERBOSE" : "ERROR"} }
           if options.key?(:forward_agent)
@@ -234,7 +234,7 @@ module Kitchen
 
         private
 
-        PING_COMMAND = "echo '[SSH] Established'".freeze
+        PING_COMMAND = "echo '[SSH lib/kitchen/transport/ssh] Established'".freeze
 
         RESCUE_EXCEPTIONS_ON_ESTABLISH = [
           Errno::EACCES, Errno::EALREADY, Errno::EADDRINUSE, Errno::ECONNREFUSED, Errno::ETIMEDOUT,
@@ -357,7 +357,7 @@ module Kitchen
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
         def retry_connection(opts)
-          log_msg = "[SSH] opening connection to #{self}"
+          log_msg = "[SSH lib/kitchen/transport/ssh] opening connection to #{self}"
           log_msg += " via #{ssh_gateway_username}@#{ssh_gateway}:#{ssh_gateway_port}" if ssh_gateway
           masked_string = Util.mask_values(log_msg, %w{password ssh_http_proxy_password})
 
@@ -366,17 +366,17 @@ module Kitchen
         rescue *RESCUE_EXCEPTIONS_ON_ESTABLISH => e
           if (opts[:retries] -= 1) > 0
             message = if opts[:message]
-                        logger.debug("[SSH] connection failed (#{e.inspect})")
+                        logger.debug("[SSH lib/kitchen/transport/ssh] connection failed (#{e.inspect})")
                         opts[:message]
                       else
-                        "[SSH] connection failed, retrying in #{opts[:delay]} seconds " \
+                        "[SSH lib/kitchen/transport/ssh] connection failed, retrying in #{opts[:delay]} seconds " \
                           "(#{e.inspect})"
                       end
             logger.info(message)
             sleep(opts[:delay])
             retry
           else
-            logger.warn("[SSH] connection failed, terminating (#{e.inspect})")
+            logger.warn("[SSH lib/kitchen/transport/ssh] connection failed, terminating (#{e.inspect})")
             raise SshFailed, "SSH session could not be established"
           end
         end
@@ -487,7 +487,7 @@ module Kitchen
           max_wait_until_ready: data[:max_wait_until_ready],
           ssh_gateway: data[:ssh_gateway],
           ssh_gateway_username: data[:ssh_gateway_username],
-          ssh_gateway_port: data[:ssh_gateway_port],
+          ssh_gateway_port: data[:ssh_gateway_port]
         }
 
         if data[:ssh_key] && !data[:password]
@@ -566,7 +566,7 @@ module Kitchen
       # @return [Ssh::Connection] an SSH Connection instance
       # @api private
       def reuse_connection
-        string_to_mask = "[SSH] reusing existing connection #{@connection}"
+        string_to_mask = "[SSH lib/kitchen/transport/ssh] reusing existing connection #{@connection}"
         masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
         logger.debug(masked_string)
         yield @connection if block_given?

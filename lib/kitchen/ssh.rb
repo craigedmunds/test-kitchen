@@ -76,7 +76,7 @@ module Kitchen
     # @param cmd [String] command string to execute
     # @raise [SSHFailed] if the command does not exit with a 0 code
     def exec(cmd)
-      string_to_mask = "[SSH] #{self} (#{cmd})"
+      string_to_mask = "[SSH lib/kitchen/ssh] #{self} (#{cmd})"
       masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
       logger.debug(masked_string)
       exit_code = exec_with_exit(cmd)
@@ -140,7 +140,7 @@ module Kitchen
     def shutdown
       return if @session.nil?
 
-      string_to_mask = "[SSH] closing connection to #{self}"
+      string_to_mask = "[SSH lib/kitchen/ssh] closing connection to #{self}"
       masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
       logger.debug(masked_string)
       session.shutdown!
@@ -159,7 +159,7 @@ module Kitchen
     # @return [LoginCommand] the login command
     def login_command
       args  = %w{ -o UserKnownHostsFile=/dev/null }
-      args += %w{ -o StrictHostKeyChecking=no }
+      args += %w{ -o StrictHostKeyChecking=no -vvv }
       args += %w{ -o IdentitiesOnly=yes } if options[:keys]
       args += %W{ -o LogLevel=#{logger.debug? ? "VERBOSE" : "ERROR"} }
       if options.key?(:forward_agent)
@@ -217,18 +217,18 @@ module Kitchen
       retries = options[:ssh_retries] || 3
 
       begin
-        string_to_mask = "[SSH] opening connection to #{self}"
+        string_to_mask = "[SSH lib/kitchen/ssh] opening connection to #{self}"
         masked_string = Util.mask_values(string_to_mask, %w{password ssh_http_proxy_password})
         logger.debug(masked_string)
         Net::SSH.start(hostname, username, options)
       rescue *rescue_exceptions => e
         retries -= 1
         if retries > 0
-          logger.info("[SSH] connection failed, retrying (#{e.inspect})")
+          logger.info("[SSH lib/kitchen/ssh] connection failed, retrying (#{e.inspect})")
           sleep options[:ssh_timeout] || 1
           retry
         else
-          logger.warn("[SSH] connection failed, terminating (#{e.inspect})")
+          logger.warn("[SSH lib/kitchen/ssh] connection failed, terminating (#{e.inspect})")
           raise
         end
       end
