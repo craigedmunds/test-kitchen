@@ -439,11 +439,13 @@ module Kitchen
             @session ||= establish_connection_via_gateway({
               retries: connection_retries.to_i,
               delay: connection_retry_sleep.to_i,
+              verbose: Logger::DEBUG,
             }.merge(retry_options))
           else
             @session ||= establish_connection({
               retries: connection_retries.to_i,
               delay: connection_retry_sleep.to_i,
+              verbose: Logger::DEBUG,
             }.merge(retry_options))
           end
         end

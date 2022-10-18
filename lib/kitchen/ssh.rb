@@ -64,7 +64,7 @@ module Kitchen
       @username = username
       @options = options.dup
       @logger = @options.delete(:logger) || ::Logger.new(STDOUT)
-
+      @options[:verbose] = Logger::DEBUG
       if block_given?
         yield self
         shutdown
