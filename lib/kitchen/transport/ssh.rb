@@ -321,6 +321,7 @@ module Kitchen
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
         def establish_connection_via_gateway(opts)
+          logger.debug("[SSH lib/kitchen/transport/ssh] opening gateway connection to #{self}")
           retry_connection(opts) do
             gateway_options = options.merge(port: ssh_gateway_port)
             Net::SSH::Gateway.new(ssh_gateway,
@@ -340,6 +341,7 @@ module Kitchen
         # @return [Net::SSH::Connection::Session] the SSH connection session
         # @api private
         def establish_connection(opts)
+          logger.debug("[SSH lib/kitchen/transport/ssh] opening non-gateway connection to #{self}")
           retry_connection(opts) do
             Net::SSH.start(hostname, username, options)
           end
