@@ -70,7 +70,7 @@ module Kitchen
       self.progname = options[:progname] || "Kitchen"
       self.level = options[:level] || default_log_level
 
-      logger.info("[Logger] initialised with level #{self.level}")
+      puts "[Logger] initialised with level #{self.level}"
     end
 
     # Pulled out for Rubocop complexity issues
