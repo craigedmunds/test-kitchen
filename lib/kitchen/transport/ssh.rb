@@ -515,7 +515,7 @@ module Kitchen
         opts[:forward_agent] = data[:forward_agent] if data.key?(:forward_agent)
         # opts[:verbose] = data[:verbose].to_sym      if data.key?(:verbose)
         opts[:verbose] = Logger::DEBUG
-
+        opts[:use_agent] = false
         # disable host key verification. The hash key and value to use
         # depend on the version of net-ssh in use
         opts[verify_host_key_option] = verify_host_key_value
