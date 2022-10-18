@@ -122,6 +122,7 @@ module Kitchen
         def initialize(config = {})
           super(config)
           @session = nil
+          logger.debug("[SSH lib/kitchen/transport/ssh] connection initialised with #{config}")
         end
 
         # (see Base::Connection#close)
@@ -428,6 +429,7 @@ module Kitchen
           @ssh_http_proxy_user     = @options.delete(:ssh_http_proxy_user)
           @ssh_http_proxy_password = @options.delete(:ssh_http_proxy_password)
           @ssh_http_proxy_port     = @options.delete(:ssh_http_proxy_port)
+
         end
 
         # Returns a connection session, or establishes one when invoked the

@@ -130,7 +130,7 @@ module Kitchen
   end
 
   # Default log level verbosity
-  DEFAULT_LOG_LEVEL = :info
+  DEFAULT_LOG_LEVEL = :debug
 
   # Overwrite the log file when Test Kitchen runs
   DEFAULT_LOG_OVERWRITE = true
